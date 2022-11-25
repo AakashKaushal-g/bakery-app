@@ -10,4 +10,5 @@ def home(request):
 ### Bakery Items APIs
 def itemsHome(request):
     print(request)
+    print(request.session['member_id'])
     return HttpResponse("Welcome to inventory Items part")
