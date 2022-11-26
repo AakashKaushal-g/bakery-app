@@ -87,75 +87,81 @@ def checkItems(request):
 def placeOrder(request):
     if request.method == "POST" :
         ## Reserve Inventory
-        orderPrices = []
-        try:
-            orderData = json.loads(request.body)
-            orders = orderData['order']
-            for order in orders:
-                itemName = order['name']
-                quantity = order['quantity']
+        if request.session['username'] : 
+            user=  request.session['username']
+            orderPrices = []
+            try:
+                orderData = json.loads(request.body)
+                orders = orderData['order']
+                for order in orders:
+                    itemName = order['name']
+                    quantity = order['quantity']
 
-                itemData = BakeryItem.objects.filter(itemName = itemName)
-                if itemData :
-                    itemData = itemData[0]
+                    itemData = BakeryItem.objects.filter(itemName = itemName)
+                    if itemData :
+                        itemData = itemData[0]
 
-                    tempData = {}
-                    tempData['name'] = itemData.itemName
-                    tempData['quantity'] = quantity
-                    tempData['discount'] = itemData.discount
-                    tempData['price'] = itemData.sellingPrice
-                    orderPrices.append(tempData)
-                    reserveFlag,successItem = reserveResouces(itemData,quantity)
-                    if reserveFlag :
-                        try:
-                            for row in successItem:
-                                obj = reserveInventory(
-                                    ingredientName = row['name'],
-                                    quantity = row['qty']
-                                )
-                                obj.save()
-                        except Exception as e :
-                            print(str(e))
-                            return HttpResponse("Unable to Place order. Resources not reserved")
+                        tempData = {}
+                        tempData['name'] = itemData.itemName
+                        tempData['quantity'] = quantity
+                        tempData['discount'] = itemData.discount
+                        tempData['price'] = itemData.sellingPrice
+                        orderPrices.append(tempData)
+                        reserveFlag,successItem = reserveResouces(itemData,quantity)
+                        if reserveFlag :
+                            try:
+                                for row in successItem:
+                                    obj = reserveInventory(
+                                        ingredientName = row['name'],
+                                        quantity = row['qty']
+                                    )
+                                    obj.save()
+                            except Exception as e :
+                                print(str(e))
+                                return HttpResponse("Unable to Place order. Resources not reserved")
+                        else:
+                            return HttpResponse("Unable to Place order. Not enough stock")
                     else:
-                        return HttpResponse("Unable to Place order. Not enough stock")
-                else:
-                    return HttpResponse("Unable to Place order. Not enough stock")        
-        except Exception as e :
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            print(exc_type, fname, exc_tb.tb_lineno)
-            return HttpResponse("Error Occured. {}".format(str(e)))
+                        return HttpResponse("Unable to Place order. Not enough stock")        
+            except Exception as e :
+                exc_type, exc_obj, exc_tb = sys.exc_info()
+                fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                print(exc_type, fname, exc_tb.tb_lineno)
+                return HttpResponse("Error Occured. {}".format(str(e)))
 
-        ## Create Order ID
-        orderId = Order.createOrderID()
+            ## Create Order ID
+            orderId = Order.createOrderID()
 
-        ## Create Order
-        if orderId and orderPrices :
-            for entry in orderPrices :
-                print('discount is ',entry['discount'])
-                discountedPrice = (1 - (entry['discount']/100))*entry['price']
-                print(discountedPrice)
-                totalPrice = entry['quantity']*discountedPrice
+            ## Create Order
+            if orderId and orderPrices :
+                for entry in orderPrices :
+                    print('discount is ',entry['discount'])
+                    discountedPrice = (1 - (entry['discount']/100))*entry['price']
+                    print(discountedPrice)
+                    totalPrice = entry['quantity']*discountedPrice
 
-                try:
-                    obj = Order(
-                        orderID = orderId,
-                        itemName = entry['name'],
-                        quantity = entry['quantity'],
-                        sellingPrice = entry['price'],
-                        totalAmount = totalPrice,
-                        discount = entry['discount']
-                    )
-                    obj.save()
-                except Exception as e :
-                    exc_type, exc_obj, exc_tb = sys.exc_info()
-                    fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-                    print(exc_type, fname, exc_tb.tb_lineno)
-                    return HttpResponse("Unable to Place order. Trouble adding order. '{}'".format(str(e)))    
+                    try:
+                        obj = Order(
+                            orderID = orderId,
+                            itemName = entry['name'],
+                            quantity = entry['quantity'],
+                            sellingPrice = entry['price'],
+                            totalAmount = totalPrice,
+                            discount = entry['discount'],
+                            username = user
+                        )
+                        obj.save()
+                        return HttpResponse("Successfully placed the order. Order id : ' {} '".format(orderId))    
+                        
+                    except Exception as e :
+                        exc_type, exc_obj, exc_tb = sys.exc_info()
+                        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                        print(exc_type, fname, exc_tb.tb_lineno)
+                        return HttpResponse("Unable to Place order. Trouble adding order. '{}'".format(str(e)))    
+            else:
+                return HttpResponse("Unable to Place order. OrderID not generated")
         else:
-            return HttpResponse("Unable to Place order. OrderID not generated")
-
+            return HttpResponse("No user is logged in. Access Denied")
     else:
         return HttpResponse(API_ERR_MSG)
 
@@ -211,8 +217,13 @@ def reserveResouces(itemData,quantity):
 
 def getOrderHistory(request):
     if request.method == "GET":
-        # if request.session['username']
-        pass
+        if request.session['username']:
+            user = request.session['username']
+
+        else:
+            return HttpResponse("No user is logged in. Access Denied")
+
+
     else:
         return HttpResponse(API_ERR_MSG)
 
