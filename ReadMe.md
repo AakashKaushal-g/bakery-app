@@ -23,3 +23,4 @@ After the registration is successful, the user needs to login to the app in orde
 3. ** firstName (string) ** : First name of the user.
 4. ** lastName (string) ** : Last name of the user
 5. ** mail (string) ** : The email address of the user.
+
