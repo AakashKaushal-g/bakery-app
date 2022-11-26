@@ -18,27 +18,9 @@ After the registration is successful, the user needs to login to the app in orde
 }
 ```
 ###### Payload element
-1. ** username (string) ** : This is the username which will used to login to the app later. There needs to be a username which is unique for each user.
-2. ** password (string) ** : The pass string which is used to authentocate the user.
-3. ** firstName (string) ** : First name of the user.
-4. ** lastName (string) ** : Last name of the user
-5. ** mail (string) ** : The email address of the user.
+1. **username (string) ** : This is the username which will used to login to the app later. There needs to be a username which is unique for each user.
+2. **password (string) ** : The pass string which is used to authentocate the user.
+3. **firstName (string) ** : First name of the user.
+4. **lastName (string) ** : Last name of the user
+5. **mail (string) ** : The email address of the user.
 
-By default, a customer would be create dwhich would have no access to APIs which can be accesses by admins/superusers.
-
-=====================================
-
-### Login (POST)
-**URL : /login**
-##### Sample Payload :
-```
-{
-    "username" : "newuser",
-    "password" : "pass,123",
-}
-```
-###### Payload element
-1. ** username (string) ** : This is the username which will used to login to the app later. There needs to be a username which is unique for each user.
-2. ** password (string) ** : The pass string which is used to authentocate the user.
-
-After a successful login, the user can access rest fo the APIs as per the authorizations set by the admin
