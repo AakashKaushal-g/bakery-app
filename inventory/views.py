@@ -3,20 +3,22 @@ import json
 from . models import Inventory
 from django.views.decorators.csrf import csrf_exempt
 
-### Inventory APIs
 API_ERR_MSG = "Invalid API Call.Please refer to documentation for correct usage of APIs"
 AUTH_ERR_MSG = "Access Denied"
+
+
+#############################
+### Inventory APIs
+#############################
 
 def home(request):
     return HttpResponse("Welcome to inventory App")
 
-@csrf_exempt
 def getIngredients(request):
     if protocolCheck(request,'GET'):
         if adminCheck(request):
             inventory = Inventory.objects.all()
             ingredients = []
-            print(inventory)
             if inventory:
                 for item in inventory:
                     itemData = {}
@@ -27,7 +29,6 @@ def getIngredients(request):
             response = {
                 'ingredient' : ingredients
             }
-            print(response)
             return HttpResponse(json.dumps(response))
 
         else:
@@ -64,6 +65,31 @@ def addIngredients(request):
     else:
         return HttpResponse(API_ERR_MSG)
 
+#############################
+### Bakery Items APIs
+#############################
+
+@csrf_exempt
+def addBakeryItem(request):
+    if protocolCheck(request,'POST'):
+        if adminCheck(request):
+            return HttpResponse("Under development")
+
+        else:
+            return HttpResponse(AUTH_ERR_MSG)
+    else:
+        return HttpResponse(API_ERR_MSG)
+
+def getBakeryItem(request):
+    if protocolCheck(request,'POST'):
+        if adminCheck(request):
+            return HttpResponse("Under development")
+
+        else:
+            return HttpResponse(AUTH_ERR_MSG)
+    else:
+        return HttpResponse(API_ERR_MSG)
+
 @csrf_exempt
 def reserveIngredients(request):
     if protocolCheck(request,'POST'):
@@ -75,14 +101,10 @@ def reserveIngredients(request):
     else:
         return HttpResponse(API_ERR_MSG)
 
-
-### Bakery Items APIs
-def itemsHome(request):
-    print(request)
-    print(request.session['member_id'])
-    return HttpResponse("Welcome to inventory Items part")
-
+#############################
 ## Utility functions:
+#############################
+
 def adminCheck(request):
     try:
         return request.session['isAdmin']
