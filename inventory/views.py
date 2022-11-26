@@ -11,22 +11,23 @@ def home(request):
     return HttpResponse("Welcome to inventory App")
 
 @csrf_exempt
-def getInventory(request):
+def getIngredients(request):
     if protocolCheck(request,'GET'):
         if adminCheck(request):
             inventory = Inventory.objects.all()
             ingredients = []
+            print(inventory)
             if inventory:
                 for item in inventory:
                     itemData = {}
                     itemData['name'] = item.ingredientName
                     itemData['quantity'] = item.quantity
-                    itemData['last_updated'] = item.dateModified
+                    itemData['last_updated'] = str(item.dateModified.strftime("%d-%m-%Y %H:%M:%S"))
                     ingredients.append(itemData)
             response = {
                 'ingredient' : ingredients
             }
-
+            print(response)
             return HttpResponse(json.dumps(response))
 
         else:
@@ -35,10 +36,28 @@ def getInventory(request):
         return HttpResponse(API_ERR_MSG)
 
 @csrf_exempt
-def addInventory(request):
+def addIngredients(request):
     if protocolCheck(request,'POST'):
         if adminCheck(request):
-            return HttpResponse("Under development")
+            ingredientList = json.loads(request.body)
+            insertResponse = {
+                'success': [],'failure': []
+            }
+
+            for ingredient in ingredientList['ingredients']:
+                flag = addDetails(ingredient['name'].lower(),ingredient['quantity']) 
+                if flag:
+                    insertResponse['success'].append(ingredient['name'])
+                else:
+                    insertResponse['failure'].append(ingredient['name'])
+            message = ''
+            if insertResponse['success']:
+                message+="Ingredients added succesfully for : {} .".format(','.join(insertResponse['success']))
+            if insertResponse['failure']:
+                message+="Failed to add Ingredients : {}.".format(','.join(insertResponse['failure']))
+
+            return HttpResponse(message)
+
 
         else:
             return HttpResponse(AUTH_ERR_MSG)
@@ -46,7 +65,7 @@ def addInventory(request):
         return HttpResponse(API_ERR_MSG)
 
 @csrf_exempt
-def reserveInventory(request):
+def reserveIngredients(request):
     if protocolCheck(request,'POST'):
         if adminCheck(request):
             return HttpResponse("Under development")
@@ -83,7 +102,9 @@ def protocolCheck(request,protocol):
 
 def addDetails(itemName,quantity):
     try:
-        prevItem = Inventory.objects.get(ingredientName=itemName)
+        print(itemName,quantity)
+        prevItem = Inventory.objects.filter(ingredientName=itemName)
+        print(prevItem)
         if prevItem:
             prevItem.quantity = prevItem.quantity+quantity
             prevItem.save()
@@ -95,7 +116,7 @@ def addDetails(itemName,quantity):
             )
             inventoryItem.save()
             
-        return None
+        return True
     except Exception as e:
         print(str(e))
-        return itemName
+        return False
