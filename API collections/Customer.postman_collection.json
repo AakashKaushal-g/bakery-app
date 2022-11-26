@@ -1,0 +1,106 @@
+{
+	"info": {
+		"_postman_id": "7b18eca9-4613-4725-923a-e0a60af3be1f",
+		"name": "Customer",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "order",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"order\":\r\n    [\r\n        {\r\n            \"name\" : \"Bread\",\r\n            \"quantity\" : 2\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:12345/order",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "12345",
+					"path": [
+						"order"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "checkItems",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:12345/checkItems",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "12345",
+					"path": [
+						"checkItems"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getOrderHistory",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:12345/getOrderHistory",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "12345",
+					"path": [
+						"getOrderHistory"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "topSellingItems",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:12345/getTopSellingItems",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "12345",
+					"path": [
+						"getTopSellingItems"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
