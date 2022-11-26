@@ -7,6 +7,6 @@ class order(models.Model):
     quantity = models.FloatField(default=0)
     sellingPrice = models.FloatField(default=0)
     totalAmount = models.FloatField(default=0)
-
+    discount = models.FloatField(default=0)
     def createOrderID() :
         return str(uuid.uuid4().hex)
