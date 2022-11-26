@@ -5,6 +5,7 @@ The API URL , mentions the details the endpoint from where API can be accesses
 To access the APIs for bakery, the user needs to register with the bakery using **register** API.
 After the registration is successful, the user needs to login to the app in order to access the APIs using **login** API.
 
+## Gerenal APIs
 ### Register (POST)
 **URL : /register**
 ##### Sample Payload :
@@ -27,7 +28,7 @@ This API is used whena new user has to register to the Bakery app.
 5. **mail** (string) : The email address of the user.
 
 ###### Success Response 
-Registration Successful for '<userName>'
+(string) Registration Successful for 'userName'
 
 After Registeration User can, Login to the Application to use the APIs.
 
@@ -48,7 +49,7 @@ This API can be used to login to the App, enabling the user to use othe APIs off
 2. **password** (string)  : The pass string which is used to authentocate the user.
 
 ###### Success Response 
-Login Successful
+(string) Login Successful
  
 After Registeration User can, Login to the Application to use the APIs
 
@@ -58,28 +59,149 @@ After Registeration User can, Login to the Application to use the APIs
 ```
 None
 ```
-
 This API can be used to logout from the App and closing the user session
 
 ###### Success Response 
-User '<userName>' logged out sucessfully
+(string) User 'userName' logged out sucessfully
 
 ========================================================
+
 ## Admin APIs
 
 To access these APIs, the user needs to login withan admin/superuser account.
 Accessing thes APIs without a admi/superuser account would return a response 'Access Denied'
 
-### Login (POST)
-**URL : /login**
+### getIngredients (GET)
+**URL : /inventory/getIngredients**
+##### Sample Payload :
+```
+None
+```
+This API is used to get the ingredients available in bakery.
+###### Payload elements
+None
+
+###### Success Response 
+(list) A list of All ingredients with name and quantity available
+
+### getBakeryItems (GET)
+**URL : /inventory/getBakeryItems**
+##### Sample Payload :
+```
+None
+```
+This API is used to get the items available in bakery.
+###### Payload elements
+None
+
+###### Success Response 
+(list) A list of All Bakery Items with the details like, prices, ingredients, discount etc.
+
+
+### addIngredients (POST)
+**URL : /inventory/addIngredients**
 ##### Sample Payload :
 ```
 {
-    "username" : "newuser",
-    "password" : "pass,123",
+    "ingredients": [
+        {
+            "name" : "Flour",
+            "quantity" : 5
+        },
+        {
+            "name" : "Milk",
+            "quantity" : 10
+        }
+    ]
 }
 ```
-This API can be used to login to the App, enablung the user to use othe APIs offered.
+This API is used to add ingredients in bakery inventory.
 ###### Payload elements
-1. **username** (string): This is the username which will used to login to the app later. There needs to be a username which is unique for each user.
-2. **password** (string)  : The pass string which is used to authentocate the user.
+**ingredients** (list) : This is a list of Ingredients which can be updated in the inventory. Each element of the list is JSON data having keys mentioned below
+**name** (string) : Name of the ingredient
+**quantity** (int) : Quantity of the ingredients in units
+
+###### Success Response 
+(string) (if ingredient is added successfully ) Ingredients added succesfully for : eggs,milk 
+(string) (if ingredient is not added successfully ) Failed to add Ingredients : eggs,milk
+
+The API serve both purposes of insert and increment. So if the Item is not existing in the availabel records, it create and entry for the ingredient otherwise, if the entry for the same ingredient already exists, then the existing quantity is incremented by the quantity recieved in the payload
+
+
+### addBakeryItem (POST)
+**URL : /inventory/addBakeryItem**
+##### Sample Payload :
+```
+{
+    "name" : "Bread",
+    "costPrice" : 25,
+    "sellingPrice" : 40,
+    "discount" : 1.25,
+    "ingredients": [
+        {
+            "name" : "Flour",
+            "quantity" : 2
+        },
+        {
+            "name" : "Milk",
+            "quantity" : 1
+        }
+    ]
+}
+```
+This API is used to add items in bakery inventory.
+###### Payload elements
+**name** (string) : Name of the Bakery Item.
+**costPrice** (float) : Cost of the Bakery item to Bakery.
+**sellingPrice** (float) : Selling amount of the item.
+**discount** (float) (_optional_) : Discount available of bakery item. If not provided , it will be defaulted to 0
+**ingredients** (list) : This is a list fo Ingredients which is required to prepare the item. Each element of the list is JSON data having keys mentioned below
+**name** (string) : Name of the ingredient to be used
+**quantity** (int) : Quantity of the ingredients required (in units)
+
+###### Success Response 
+(string) (When Bakery item is added) Added Bakery Item : nameOfItem 
+(string) (When Bakery item is added) Updated Bakery Item : nameOfItem
+
+The API serve both purposes of insert and update. So if the Item is not existing in the available records, it create and entry for the bakery otherwise, if the entry for the same bakery already exists, then the existing details are updated by the recentrly received details in payload.
+
+### updateDiscount (PATCH)
+**URL : /inventory/updateDiscount**
+##### Sample Payload :
+```
+{
+    "name" : "Bread",
+    "discount" : 12
+}
+```
+This API is used to update discount value for items in bakery inventory.
+###### Payload elements
+**name** (string) : Name of the Bakery Item.
+**discount** (float) : Discount to updated for bakery item.
+
+###### Success Response 
+(string) Discount Value updated for item 'nameOfItem'
+
+
+### discardIngredients (DELETE)
+**URL : /inventory/discardIngredients**
+##### Sample Payload :
+```
+{
+    "name" :
+    [
+        "eggs","flour"
+    ]
+    
+}
+```
+This API is used to add items in bakery inventory.
+###### Payload elements
+**name** (list) : List of Names of the Bakery Items to be deleted
+
+###### Success Response 
+(string) (if element is not present) Ingredients not found : eggs,flour 
+(string) (if element is present) Ingredients deleted : eggs,flour 
+
+
+## Customer APIs

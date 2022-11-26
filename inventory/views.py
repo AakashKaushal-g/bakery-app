@@ -67,7 +67,7 @@ def addIngredients(request):
 
 @csrf_exempt
 def discardIngredients(request):
-    if protocolCheck(request,'POST'):
+    if protocolCheck(request,'DELETE'):
         if adminCheck(request):
             ingredientList = json.loads(request.body)
             deletedList = [];failedList=[]
@@ -179,7 +179,7 @@ def getBakeryItems(request):
 
 @csrf_exempt
 def updateDiscount(request):
-    if protocolCheck(request,'POST'):
+    if protocolCheck(request,'PATCH'):
         if adminCheck(request):
             try:
                 itemData = json.loads(request.body)
@@ -202,16 +202,6 @@ def updateDiscount(request):
     else:
         return HttpResponse(API_ERR_MSG)
 
-@csrf_exempt
-def reserveIngredients(request):
-    if protocolCheck(request,'POST'):
-        if adminCheck(request):
-            return HttpResponse("Under development")
-
-        else:
-            return HttpResponse(AUTH_ERR_MSG)
-    else:
-        return HttpResponse(API_ERR_MSG)
 
 #############################
 ## Utility functions:
