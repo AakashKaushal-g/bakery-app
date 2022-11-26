@@ -75,7 +75,7 @@ def addBakeryItem(request):
         if adminCheck(request):
             try:
                 itemData = json.loads(request.body)
-                print(itemData)
+                
                 itemName = itemData['name']
                 ingredientList = [str(ingredient['name']) for ingredient in itemData['ingredients']]
                 quantityList = [str(ingredient['quantity']) for ingredient in itemData['ingredients']]
@@ -141,6 +141,30 @@ def getBakeryItems(request):
                 "items" : items
             }
             return HttpResponse(json.dumps(response))
+        else:
+            return HttpResponse(AUTH_ERR_MSG)
+    else:
+        return HttpResponse(API_ERR_MSG)
+
+@csrf_exempt
+def addDiscount(request):
+    if protocolCheck(request,'POST'):
+        if adminCheck(request):
+            try:
+                itemData = json.loads(request.body)
+                discount = itemData['discount']
+                if type(discount) != float and type(discount) != int :
+                    return HttpResponse("The Discount value entered is not numberical. terminating Operation")
+                checkItem = BakeryItem.objects.filter(itemName = itemData['name'])
+                if checkItem:
+                    checkItem = checkItem[0]
+                    checkItem.discount = discount
+                    checkItem.save()
+                    return HttpResponse("Discount Value updated for item '{}'".format(itemData['name']))
+                else:
+                    return HttpResponse("No Bakery item '{}' Exists. Please add an item to updated dicsount value for it.")
+            except Exception as e :
+                return HttpResponse("Error occured. {}".str(e))
         else:
             return HttpResponse(AUTH_ERR_MSG)
     else:
