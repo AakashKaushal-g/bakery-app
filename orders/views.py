@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json,os,sys
 from django.db.models import Sum
 from inventory.models import BakeryItem,Inventory,reserveInventory
-from .models import order
+from .models import Order
 # Create your views here.
 API_ERR_MSG = "Invalid API Call.Please refer to documentation for correct usage of APIs"
 
@@ -140,7 +140,7 @@ def placeOrder(request):
 
                 try:
                     obj = Order(
-                        orderId = orderId,
+                        orderID = orderId,
                         itemName = entry['name'],
                         quantity = entry['quantity'],
                         sellingPrice = entry['price'],
@@ -172,12 +172,10 @@ def reserveResouces(itemData,quantity):
             existingData = reserveInventory.objects.filter(ingredientName = name.lower())
             existingCount = 0
             if existingData :
-                existingCount = list(reserveInventory.objects.aggregate(Sum('quantity')).values())[0]
+                existingCount = list(reserveInventory.objects.filter(ingredientName = name.lower()).aggregate(Sum('quantity')).values())[0]
             totalCount = Inventory.objects.filter(ingredientName = name)
             if totalCount:
                 totalCount = totalCount[0].quantity
-                print(name,totalCount,existingCount)
-
                 if (totalCount - existingCount) > 1:
                     successItem.append({
                         'name' : name,
@@ -197,7 +195,7 @@ def reserveResouces(itemData,quantity):
                         "qty" : qty
                     })
                 break
-        print(failureItem)
+        
         if failureItem:
             return False,[]
         else:
