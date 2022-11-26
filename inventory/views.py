@@ -116,11 +116,31 @@ def addBakeryItem(request):
     else:
         return HttpResponse(API_ERR_MSG)
 
-def getBakeryItem(request):
-    if protocolCheck(request,'POST'):
+def getBakeryItems(request):
+    if protocolCheck(request,'GET'):
         if adminCheck(request):
-            return HttpResponse("Under development")
+            itemData = BakeryItem.objects.all()
+            items = []
+            for item in itemData :
+                obj = {}
+                ingredientList = item.ingredientList.split(',')
+                quantityList = item.quantityList.split(',')
+                obj['name'] = item.itemName
+                obj['costPrice'] = item.costPrice
+                obj['sellingPrice'] = item.sellingPrice
+                obj['discount'] = item.discount
+                obj['ingredients'] = []
+                for i in range(len(ingredientList)):
+                    temp = {}
+                    temp['name'] = ingredientList[i]
+                    temp['quantity'] = quantityList[i]
+                    obj['ingredients'].append(temp)
 
+                items.append(obj)
+            response = {
+                "items" : items
+            }
+            return HttpResponse(json.dumps(response))
         else:
             return HttpResponse(AUTH_ERR_MSG)
     else:

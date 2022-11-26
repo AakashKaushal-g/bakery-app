@@ -6,6 +6,6 @@ urlpatterns = [
    path('getIngredients', views.getIngredients, name='getIngredients'),
    path('addIngredients', views.addIngredients, name='addIngredients'),
    path('addBakeryItem', views.addBakeryItem, name='addBakeryItem'),
-   path('getBakeryItem', views.getBakeryItem, name='getBakeryItem'),
+   path('getBakeryItems', views.getBakeryItems, name='getBakeryItems'),
    
 ]

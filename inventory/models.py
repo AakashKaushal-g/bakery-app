@@ -12,9 +12,9 @@ class Inventory(models.Model):
 
 class BakeryItem(models.Model):
     itemName = models.CharField(max_length=200)
-    costPrice = models.FloatField()(default=0)
-    sellingPrice = models.FloatField()(default=0)
-    discount = models.FloatField()(default=0)
+    costPrice = models.FloatField(default=0)
+    sellingPrice = models.FloatField(default=0)
+    discount = models.FloatField(default=0)
     ingredientList = models.CharField(max_length=1000)
     quantityList = models.CharField(max_length=1000)
 
