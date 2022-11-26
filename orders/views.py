@@ -36,7 +36,7 @@ def register(request):
             exc_type, exc_obj, exc_tb = sys.exc_info()
             fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
             print(exc_type, fname, exc_tb.tb_lineno)
-            return HttpResponse("Error occured while logging in user. Exceptions => {}".format(str(e)))
+            return HttpResponse("Error occured while registering user. Exceptions => {}".format(str(e)))
 
     else :
         return HttpResponse(API_ERR_MSG)
@@ -107,7 +107,7 @@ def checkItems(request):
             }
             return HttpResponse(json.dumps(response),content_type="application/json")
         except Exception as e :
-            return HttpResponse("Error Occured : {}".format(str(e)))
+            return HttpResponse("Error Occured while fetching Bakery Items : Exception => {}".format(str(e)))
     else:
         return HttpResponse(API_ERR_MSG)
 
@@ -155,7 +155,7 @@ def placeOrder(request):
                 exc_type, exc_obj, exc_tb = sys.exc_info()
                 fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
                 print(exc_type, fname, exc_tb.tb_lineno)
-                return HttpResponse("Error Occured. {}".format(str(e)))
+                return HttpResponse("Error Occured while placing order.Exception {}".format(str(e)))
 
             ## Create Order ID
             orderId = Order.createOrderID()
@@ -183,7 +183,7 @@ def placeOrder(request):
                         exc_type, exc_obj, exc_tb = sys.exc_info()
                         fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
                         print(exc_type, fname, exc_tb.tb_lineno)
-                        return HttpResponse("Unable to Place order. Trouble adding order. '{}'".format(str(e)))    
+                        return HttpResponse("Unable to Place order. Trouble adding order. Exception => '{}'".format(str(e)))    
             else:
                 return HttpResponse("Unable to Place order. OrderID not generated")
         else:
@@ -237,6 +237,8 @@ def reserveResouces(itemData,quantity):
         exc_type, exc_obj, exc_tb = sys.exc_info()
         fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
         print(exc_type, fname, exc_tb.tb_lineno)
+        return False,[]
+
 
         print("Error reserving the Resouces")
         return str(e)

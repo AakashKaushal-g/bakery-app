@@ -139,6 +139,8 @@ def addBakeryItem(request):
 
             except Exception as e:
                 print(str(e))
+                return HttpResponse("Error occured while adding item in user. Exceptions => {}".format(str(e)))
+
 
         else:
             return HttpResponse(AUTH_ERR_MSG)
@@ -193,7 +195,8 @@ def updateDiscount(request):
                 else:
                     return HttpResponse("No Bakery item '{}' Exists. Please add an item to updated dicsount value for it.")
             except Exception as e :
-                return HttpResponse("Error occured. {}".str(e))
+                return HttpResponse("Error occured while updating discount. Exception : {}".str(e))
+                
         else:
             return HttpResponse(AUTH_ERR_MSG)
     else:
@@ -233,7 +236,6 @@ def protocolCheck(request,protocol):
 
 def addDetails(itemName,quantity):
     try:
-        print(itemName,quantity)
         previousItem = Inventory.objects.filter(ingredientName=itemName)
         
         if previousItem:
