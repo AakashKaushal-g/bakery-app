@@ -10,7 +10,7 @@ from .models import Order
 API_ERR_MSG = "Invalid API Call.Please refer to documentation for correct usage of APIs"
 
 ####################
-### Login/Logut
+### User Management
 ####################
 
 @csrf_exempt
@@ -135,9 +135,7 @@ def placeOrder(request):
             ## Create Order
             if orderId and orderPrices :
                 for entry in orderPrices :
-                    print('discount is ',entry['discount'])
                     discountedPrice = (1 - (entry['discount']/100))*entry['price']
-                    print(discountedPrice)
                     totalPrice = entry['quantity']*discountedPrice
 
                     try:
@@ -219,7 +217,27 @@ def getOrderHistory(request):
     if request.method == "GET":
         if request.session['username']:
             user = request.session['username']
+            userOrders = Order.objects.filter(username = user).order_by('-createdAt')
+            orderData = {}
+            for order in userOrders :
+                orderID = order.orderID
+                print
+                if orderID not in orderData.keys() and len(orderData.keys()) < 11 :
+                    orderData[orderID] = []
 
+                    tempDict = {}
+                    tempDict['itemName'] = order.itemName
+                    tempDict['itemQuantity'] = order.quantity
+                    tempDict['totalAmount'] = order.totalAmount
+                    tempDict['createAt'] = str(order.createdAt.strftime("%d-%m-%Y %H:%M:%S"))
+
+                    orderData[orderID].append(tempDict)
+            
+            response = {
+                user : orderData
+            }
+            print(response)
+            return HttpResponse(json.dumps(response),content_type="application/json")
         else:
             return HttpResponse("No user is logged in. Access Denied")
 
@@ -227,3 +245,32 @@ def getOrderHistory(request):
     else:
         return HttpResponse(API_ERR_MSG)
 
+####################
+### Misc
+####################
+
+def topSellingItems(request):
+    if request.method == "GET":
+        itemData = Order.objects.all()
+        itemList = {}
+        for item in itemData :
+            itemDetails = {}
+            itemName = item.itemName
+
+            if itemName not in itemList.keys():
+                itemList[itemName] = 0
+            
+            itemList[itemName]+=item.quantity
+        
+        sortedList = {k: v for k, v in sorted(itemList.items(), key=lambda item: item[1],reverse=True)}
+        popularItems = [key.strip('\r\n') for key in sortedList.keys()]
+        if len(popularItems) > 5:
+            popularItems= popularItems[:5]
+        
+        response = {
+            "Popular Items " : popularItems
+        }
+        return HttpResponse(json.dumps(response),content_type="application/json")
+            
+    else:
+        return HttpResponse(API_ERR_MSG)

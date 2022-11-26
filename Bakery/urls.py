@@ -8,6 +8,6 @@ urlpatterns = [
     path('logout', orderViews.logout, name='logout'),
     path('checkItems', orderViews.checkItems, name='checkItems'),
     path('order', orderViews.placeOrder, name='placeOrder'),
-    path('orderHistory', orderViews.getOrderHistory, name='orderHistory'),
-    
+    path('getOrderHistory', orderViews.getOrderHistory, name='orderHistory'),
+    path('getTopSellingItems', orderViews.topSellingItems, name='topSellingItems'),
 ]
