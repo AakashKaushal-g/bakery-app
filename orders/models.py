@@ -8,5 +8,7 @@ class Order(models.Model):
     sellingPrice = models.FloatField(default=0)
     totalAmount = models.FloatField(default=0)
     discount = models.FloatField(default=0)
+    username = models.CharField(max_length=50)
+
     def createOrderID() :
         return str(uuid.uuid4().hex)

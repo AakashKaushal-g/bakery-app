@@ -209,4 +209,10 @@ def reserveResouces(itemData,quantity):
         print("Error reserving the Resouces")
         return str(e)
 
+def getOrderHistory(request):
+    if request.method == "GET":
+        # if request.session['username']
+        pass
+    else:
+        return HttpResponse(API_ERR_MSG)
 
