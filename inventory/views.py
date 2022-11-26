@@ -147,7 +147,7 @@ def getBakeryItems(request):
         return HttpResponse(API_ERR_MSG)
 
 @csrf_exempt
-def addDiscount(request):
+def updateDiscount(request):
     if protocolCheck(request,'POST'):
         if adminCheck(request):
             try:
