@@ -141,7 +141,6 @@ def addBakeryItem(request):
                 print(str(e))
                 return HttpResponse("Error occured while adding item in user. Exceptions => {}".format(str(e)))
 
-
         else:
             return HttpResponse(AUTH_ERR_MSG)
     else:
