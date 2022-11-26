@@ -1,7 +1,7 @@
 from django.db import models
 import uuid
 # Create your models here.
-class order(models.Model):
+class Order(models.Model):
     orderID = models.CharField(max_length=32)
     itemName = models.CharField(max_length=200)
     quantity = models.FloatField(default=0)

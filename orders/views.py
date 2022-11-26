@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.views.decorators.csrf import csrf_exempt
-import json
+import json,os,sys
 from django.db.models import Sum
 from inventory.models import BakeryItem,Inventory,reserveInventory
 from .models import order
@@ -105,8 +105,7 @@ def placeOrder(request):
                     tempData['discount'] = itemData.discount
                     tempData['price'] = itemData.sellingPrice
                     orderPrices.append(tempData)
-                
-                    reserveFlag,successItem = reserveInventory(itemData,quantity)
+                    reserveFlag,successItem = reserveResouces(itemData,quantity)
                     if reserveFlag :
                         try:
                             for row in successItem:
@@ -123,10 +122,13 @@ def placeOrder(request):
                 else:
                     return HttpResponse("Unable to Place order. Not enough stock")        
         except Exception as e :
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            print(exc_type, fname, exc_tb.tb_lineno)
             return HttpResponse("Error Occured. {}".format(str(e)))
 
         ## Create Order ID
-        orderId = order.createOrderID()
+        orderId = Order.createOrderID()
 
         ## Create Order
         if orderId and orderPrices :
@@ -137,7 +139,7 @@ def placeOrder(request):
                 totalPrice = entry['quantity']*discountedPrice
 
                 try:
-                    obj = order(
+                    obj = Order(
                         orderId = orderId,
                         itemName = entry['name'],
                         quantity = entry['quantity'],
@@ -147,47 +149,64 @@ def placeOrder(request):
                     )
                     obj.save()
                 except Exception as e :
-                    return HttpResponse("Unable to Place order. Trouble adding order. '{}'".format(str(e)))
-
-            
+                    exc_type, exc_obj, exc_tb = sys.exc_info()
+                    fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                    print(exc_type, fname, exc_tb.tb_lineno)
+                    return HttpResponse("Unable to Place order. Trouble adding order. '{}'".format(str(e)))    
         else:
             return HttpResponse("Unable to Place order. OrderID not generated")
 
     else:
         return HttpResponse(API_ERR_MSG)
 
+def reserveResouces(itemData,quantity):
+    try:
+        failureItem=[];successItem = []
+        IngredientList = itemData.ingredientList.split(',')
+        quantityList = itemData.quantityList.split(',')
+        
+        for i in range(len(IngredientList)):
+            name = IngredientList[i].lower()
+            qty = float(quantityList[i])*quantity
 
-def reserveInventory(itemData,quantity):
-    failureItem=[],successItem = []
-    IngredientList = itemData.ingredientList.split(',')
-    quantityList = itemData.quantityList.split(',')
-    for i in range(IngredientList):
-        name = IngredientList[i]
-        qty = float(quantityList[i])*quantity
+            existingData = reserveInventory.objects.filter(ingredientName = name.lower())
+            existingCount = 0
+            if existingData :
+                existingCount = list(reserveInventory.objects.aggregate(Sum('quantity')).values())[0]
+            totalCount = Inventory.objects.filter(ingredientName = name)
+            if totalCount:
+                totalCount = totalCount[0].quantity
+                print(name,totalCount,existingCount)
 
-        existingData = reserveInventory.objects.filter(ingredientName = name)
-        existingCount = 0
-        if existingData :
-            existingCount = list(reserveInventory.objects.aggregate(Sum('quantity')).values())[0]
-        totalCount = Inventory.objects.filter(ingredientName = name)[0]
-        if totalCount:
-            if (totalCount - existingCount) < 1:
-                successItem.append({
-                    'name' : name,
-                    "qty" : qty
-                })
+                if (totalCount - existingCount) > 1:
+                    successItem.append({
+                        'name' : name,
+                        "qty" : qty
+                    })
+                else:
+                    print("Not Enough Ingredients")
+                    failureItem.append({
+                        'name' : name,
+                        "qty" : qty
+                    })
+                    break
             else:
-                print("Not Enough Ingredients")
-                failureItem.append(failureItem)
+                print('item not defined in inventory')
+                failureItem.append({
+                        'name' : name,
+                        "qty" : qty
+                    })
                 break
+        print(failureItem)
+        if failureItem:
+            return False,[]
         else:
-            print('item not defined in inventory')
-            failureItem.append(failureItem)
-            break
-    if failureItem:
-        return False,[]
-    else:
-        return True,successItem
+            return True,successItem
+    except Exception as e :
+        print(e)
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        print(exc_type, fname, exc_tb.tb_lineno)
 
         print("Error reserving the Resouces")
         return str(e)
