@@ -29,7 +29,7 @@ def getIngredients(request):
             response = {
                 'ingredient' : ingredients
             }
-            return HttpResponse(json.dumps(response))
+            return HttpResponse(json.dumps(response),content_type="application/json")
 
         else:
             return HttpResponse(AUTH_ERR_MSG)
@@ -140,7 +140,7 @@ def getBakeryItems(request):
             response = {
                 "items" : items
             }
-            return HttpResponse(json.dumps(response))
+            return HttpResponse(json.dumps(response),content_type="application/json")
         else:
             return HttpResponse(AUTH_ERR_MSG)
     else:
