@@ -3,7 +3,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.views.decorators.csrf import csrf_exempt
 import json
-from inventory.models import BakeryItem,Inventory
+from django.db.models import Sum
+from inventory.models import BakeryItem,Inventory,reserveInventory
+from .models import order
 # Create your views here.
 API_ERR_MSG = "Invalid API Call.Please refer to documentation for correct usage of APIs"
 
@@ -81,17 +83,113 @@ def checkItems(request):
     else:
         return HttpResponse(API_ERR_MSG)
 
+@csrf_exempt
 def placeOrder(request):
-    ## Reserve Inventory
-    try:
-        if reserveInventory(request):
-            return HttpResponse("Unable to Place order. Not enough stock")
-    except Exception as e :
-        return HttpResponse("Error Occured. {}".format(str(e)))
+    if request.method == "POST" :
+        ## Reserve Inventory
+        orderPrices = []
+        try:
+            orderData = json.loads(request.body)
+            orders = orderData['order']
+            for order in orders:
+                itemName = order['name']
+                quantity = order['quantity']
 
-    ## Create Order ID
+                itemData = BakeryItem.objects.filter(itemName = itemName)
+                if itemData :
+                    itemData = itemData[0]
 
-    ## Create Order
+                    tempData = {}
+                    tempData['name'] = itemData.itemName
+                    tempData['quantity'] = quantity
+                    tempData['discount'] = itemData.discount
+                    tempData['price'] = itemData.sellingPrice
+                    orderPrices.append(tempData)
+                
+                    reserveFlag,successItem = reserveInventory(itemData,quantity)
+                    if reserveFlag :
+                        try:
+                            for row in successItem:
+                                obj = reserveInventory(
+                                    ingredientName = row['name'],
+                                    quantity = row['qty']
+                                )
+                                obj.save()
+                        except Exception as e :
+                            print(str(e))
+                            return HttpResponse("Unable to Place order. Resources not reserved")
+                    else:
+                        return HttpResponse("Unable to Place order. Not enough stock")
+                else:
+                    return HttpResponse("Unable to Place order. Not enough stock")        
+        except Exception as e :
+            return HttpResponse("Error Occured. {}".format(str(e)))
 
-def reserveInventory(request):
-    pass
+        ## Create Order ID
+        orderId = order.createOrderID()
+
+        ## Create Order
+        if orderId and orderPrices :
+            for entry in orderPrices :
+                print('discount is ',entry['discount'])
+                discountedPrice = (1 - (entry['discount']/100))*entry['price']
+                print(discountedPrice)
+                totalPrice = entry['quantity']*discountedPrice
+
+                try:
+                    obj = order(
+                        orderId = orderId,
+                        itemName = entry['name'],
+                        quantity = entry['quantity'],
+                        sellingPrice = entry['price'],
+                        totalAmount = totalPrice,
+                        discount = entry['discount']
+                    )
+                    obj.save()
+                except Exception as e :
+                    return HttpResponse("Unable to Place order. Trouble adding order. '{}'".format(str(e)))
+
+            
+        else:
+            return HttpResponse("Unable to Place order. OrderID not generated")
+
+    else:
+        return HttpResponse(API_ERR_MSG)
+
+
+def reserveInventory(itemData,quantity):
+    failureItem=[],successItem = []
+    IngredientList = itemData.ingredientList.split(',')
+    quantityList = itemData.quantityList.split(',')
+    for i in range(IngredientList):
+        name = IngredientList[i]
+        qty = float(quantityList[i])*quantity
+
+        existingData = reserveInventory.objects.filter(ingredientName = name)
+        existingCount = 0
+        if existingData :
+            existingCount = list(reserveInventory.objects.aggregate(Sum('quantity')).values())[0]
+        totalCount = Inventory.objects.filter(ingredientName = name)[0]
+        if totalCount:
+            if (totalCount - existingCount) < 1:
+                successItem.append({
+                    'name' : name,
+                    "qty" : qty
+                })
+            else:
+                print("Not Enough Ingredients")
+                failureItem.append(failureItem)
+                break
+        else:
+            print('item not defined in inventory')
+            failureItem.append(failureItem)
+            break
+    if failureItem:
+        return False,[]
+    else:
+        return True,successItem
+
+        print("Error reserving the Resouces")
+        return str(e)
+
+
