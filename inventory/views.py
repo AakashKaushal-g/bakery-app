@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 import json
+from . models import Inventory
 from django.views.decorators.csrf import csrf_exempt
 
 ### Inventory APIs
@@ -11,10 +12,22 @@ def home(request):
 
 @csrf_exempt
 def getInventory(request):
-    if protocolCheck(request,'POST'):
+    if protocolCheck(request,'GET'):
         if adminCheck(request):
-            payload = json.loads(request.body)
-            return HttpResponse("Under development")
+            inventory = Inventory.objects.all()
+            ingredients = []
+            if inventory:
+                for item in inventory:
+                    itemData = {}
+                    itemData['name'] = item.ingredientName
+                    itemData['quantity'] = item.quantity
+                    itemData['last_updated'] = item.dateModified
+                    ingredients.append(itemData)
+            response = {
+                'ingredient' : ingredients
+            }
+
+            return HttpResponse(json.dumps(response))
 
         else:
             return HttpResponse(AUTH_ERR_MSG)
@@ -44,7 +57,6 @@ def reserveInventory(request):
         return HttpResponse(API_ERR_MSG)
 
 
-
 ### Bakery Items APIs
 def itemsHome(request):
     print(request)
@@ -70,4 +82,20 @@ def protocolCheck(request,protocol):
         return False
 
 def addDetails(itemName,quantity):
-    pass
+    try:
+        prevItem = Inventory.objects.get(ingredientName=itemName)
+        if prevItem:
+            prevItem.quantity = prevItem.quantity+quantity
+            prevItem.save()
+
+        else:
+            inventoryItem = Inventory(
+                ingredientName = itemName,
+                quantity = quantity
+            )
+            inventoryItem.save()
+            
+        return None
+    except Exception as e:
+        print(str(e))
+        return itemName
