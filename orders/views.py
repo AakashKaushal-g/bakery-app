@@ -6,6 +6,10 @@ import json
 # Create your views here.
 API_ERR_MSG = "Invalid API Call.Please refer to documentation for correct usage of APIs"
 
+####################
+### Login/Logut
+####################
+
 @csrf_exempt
 def login(request):
     if request.method =='POST':
@@ -51,5 +55,9 @@ def logout(request):
     else :
         return HttpResponse(API_ERR_MSG)
 
+####################
+### Ordering
+####################
+
 def placeOrder(request):
-    return HttpResponse("API under development")
+    pass
