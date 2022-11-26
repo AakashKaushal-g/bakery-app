@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 import json
-from . models import Inventory
+from . models import Inventory,BakeryItem
 from django.views.decorators.csrf import csrf_exempt
 
 API_ERR_MSG = "Invalid API Call.Please refer to documentation for correct usage of APIs"
@@ -73,7 +73,43 @@ def addIngredients(request):
 def addBakeryItem(request):
     if protocolCheck(request,'POST'):
         if adminCheck(request):
-            return HttpResponse("Under development")
+            try:
+                itemData = json.loads(request.body)
+                print(itemData)
+                itemName = itemData['name']
+                ingredientList = [str(ingredient['name']) for ingredient in itemData['ingredients']]
+                quantityList = [str(ingredient['quantity']) for ingredient in itemData['ingredients']]
+                if 'discount' in itemData.keys():
+                    discount = itemData['discount']
+                else:
+                    discount=0
+
+                previousData = BakeryItem.objects.filter(itemName=itemName)
+                if previousData:
+                    previousData = previousData[0]
+                    
+                    previousData.costPrice = itemData['costPrice']
+                    previousData.sellingPrice = itemData['sellingPrice']
+                    previousData.ingredientList = ",".join(ingredientList)
+                    previousData.quantityList = ",".join(quantityList)
+                    previousData.discount = discount
+                    previousData.save()
+                    return HttpResponse("Updated Bakery Item : {}".format(itemName))
+
+                else:
+                    item = BakeryItem(
+                        itemName = itemName,
+                        costPrice = itemData['costPrice'],
+                        sellingPrice = itemData['sellingPrice'],
+                        ingredientList = ",".join(ingredientList),
+                        quantityList = ",".join(quantityList),
+                        discount = discount
+                    )
+                    item.save()
+                    return HttpResponse("Added Bakery Item : {}".format(itemName))
+
+            except Exception as e:
+                print(str(e))
 
         else:
             return HttpResponse(AUTH_ERR_MSG)
@@ -125,11 +161,12 @@ def protocolCheck(request,protocol):
 def addDetails(itemName,quantity):
     try:
         print(itemName,quantity)
-        prevItem = Inventory.objects.filter(ingredientName=itemName)
-        print(prevItem)
-        if prevItem:
-            prevItem.quantity = prevItem.quantity+quantity
-            prevItem.save()
+        previousItem = Inventory.objects.filter(ingredientName=itemName)
+        
+        if previousItem:
+            previousItem = previousItem[0]
+            previousItem.quantity = previousItem.quantity+quantity
+            previousItem.save()
 
         else:
             inventoryItem = Inventory(

@@ -7,6 +7,5 @@ urlpatterns = [
    path('addIngredients', views.addIngredients, name='addIngredients'),
    path('addBakeryItem', views.addBakeryItem, name='addBakeryItem'),
    path('getBakeryItem', views.getBakeryItem, name='getBakeryItem'),
-   path('itemHome', views.itemsHome, name='itemHome')
    
 ]
