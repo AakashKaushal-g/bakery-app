@@ -18,14 +18,15 @@ After the registration is successful, the user needs to login to the app in orde
 }
 ```
 ###### Payload elements
-1. ** username (string) ** : This is the username which will used to login to the app later. There needs to be a username which is unique for each user.
-2. ** password (string) ** : The pass string which is used to authentocate the user.
-3. ** firstName (string) ** : First name of the user.
-4. ** lastName (string) ** : Last name of the user
-5. ** mail (string) ** : The email address of the user.
+1. **username** (string) : This is the username which will used to login to the app later. There needs to be a username which is unique for each user.
+2. **password** (string)  : The pass string which is used to authentocate the user.
+3. **firstName** (string) : First name of the user.
+4. **lastName** (string) : Last name of the user
+5. **mail** (string) : The email address of the user.
 
 After Registeration User can, Login to the Application to use the APIs
 
+========================================================
 
 ### Login (POST)
 **URL : /login**
@@ -37,7 +38,7 @@ After Registeration User can, Login to the Application to use the APIs
 }
 ```
 ###### Payload elements
-1. ** username **(string): This is the username which will used to login to the app later. There needs to be a username which is unique for each user.
-2. ** password ** (string)  : The pass string which is used to authentocate the user.
+1. **username**(string): This is the username which will used to login to the app later. There needs to be a username which is unique for each user.
+2. **password** (string)  : The pass string which is used to authentocate the user.
 
 After Registeration User can, Login to the Application to use the APIs
