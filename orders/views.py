@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.views.decorators.csrf import csrf_exempt
 import json
+from inventory.models import BakeryItem,Inventory
 # Create your views here.
 API_ERR_MSG = "Invalid API Call.Please refer to documentation for correct usage of APIs"
 
@@ -59,5 +60,31 @@ def logout(request):
 ### Ordering
 ####################
 
+def checkItems(request):
+    if request.method == "GET":
+        try:
+            itemData = BakeryItem.objects.all()
+            items =[]
+            if itemData:
+                for item in itemData:
+                    obj = {}
+                    obj['name'] = item.itemName
+                    obj['price (Rs.)'] = item.sellingPrice
+                    obj['dicount (%)'] = item.discount
+                    items.append(obj)
+            response = {
+                'Available Items' : items
+            }
+            return HttpResponse(json.dumps(response),content_type="application/json")
+        except Exception as e :
+            return HttpResponse("Error Occured : {}".format(str(e)))
+    else:
+        return HttpResponse(API_ERR_MSG)
+
 def placeOrder(request):
     pass
+    ## Reserve Inventory
+
+    ## Create Order ID
+
+    ## Create Order
