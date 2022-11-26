@@ -5,7 +5,7 @@ The API URL , mentions the details the endpoint from where API can be accesses
 To access the APIs for bakery, the user needs to register with the bakery using **register** API.
 After the registration is successful, the user needs to login to the app in order to access the APIs using **login** API.
 
-## Gerenal APIs
+## General APIs
 ### Register (POST)
 **URL : /register**
 ##### Sample Payload :
@@ -18,19 +18,19 @@ After the registration is successful, the user needs to login to the app in orde
     "mail": "newuser@bakery.com"
 }
 ```
-This API is used whena new user has to register to the Bakery app.
+This API is used when a new user has to register to the Bakery app.
 
 ###### Payload elements
 1. **username** (string) : This is the username which will used to login to the app later. There needs to be a username which is unique for each user.
-2. **password** (string)  : The pass string which is used to authentocate the user.
+2. **password** (string)  : The pass string which is used to authenticate the user.
 3. **firstName** (string) : First name of the user.
-4. **lastName** (string) : Last name of the user
+4. **lastName** (string) : Last name of the user.
 5. **mail** (string) : The email address of the user.
 
 ###### Success Response 
-- (string) Registration Successful for 'userName'
+- (string) Registration Successful for 'userName'.
 
-After Registeration User can, Login to the Application to use the APIs.
+After Registration User can, Login to the Application to use the APIs.
 
 ### Login (POST)
 **URL : /login**
@@ -41,15 +41,15 @@ After Registeration User can, Login to the Application to use the APIs.
     "password" : "pass,123",
 }
 ```
-This API can be used to login to the App, enabling the user to use othe APIs offered.
+This API can be used to login to the App, enabling the user to use other APIs offered.
 ###### Payload elements
 1. **username** (string): This is the username which will used to login to the app later. There needs to be a username which is unique for each user.
-2. **password** (string)  : The pass string which is used to authentocate the user.
+2. **password** (string)  : The pass string which is used to authenticate the user.
 
 ###### Success Response 
-- (string) Login Successful
+- (string) Login Successful.
  
-After Registeration User can, Login to the Application to use the APIs
+After Registration User can, Login to the Application to use the APIs.
 
 ### Logout (GET)
 **URL : /logout**
@@ -57,17 +57,17 @@ After Registeration User can, Login to the Application to use the APIs
 ```
 None
 ```
-This API can be used to logout from the App and closing the user session
+This API can be used to logout from the App and closing the user session.
 
 ###### Success Response 
-- (string) User 'userName' logged out sucessfully
+- (string) User 'userName' logged out successfully.
 
 ========================================================
 
 ## Admin APIs
 
-To access these APIs, the user needs to login withan admin/superuser account.
-Accessing thes APIs without a admi/superuser account would return a response 'Access Denied'
+To access these APIs, the user needs to login with an admin/superuser account.
+Accessing these APIs without a admin/superuser account would return a 'Access Denied' response. 
 
 ### getIngredients (GET)
 **URL : /inventory/getIngredients**
@@ -120,10 +120,10 @@ This API is used to add ingredients in bakery inventory.
 **quantity** (int) : Quantity of the ingredients in units
 
 ###### Success Response 
-- (string) (if ingredient is added successfully ) Ingredients added succesfully for : eggs,milk 
+- (string) (if ingredient is added successfully ) Ingredients added successfully for : eggs,milk 
 - (string) (if ingredient is not added successfully ) Failed to add Ingredients : eggs,milk
 
-The API serve both purposes of insert and increment. So if the Item is not existing in the availabel records, it create and entry for the ingredient otherwise, if the entry for the same ingredient already exists, then the existing quantity is incremented by the quantity recieved in the payload
+The API serve both purposes of insert and increment. So if the Item is not existing in the available records, it create and entry for the ingredient otherwise, if the entry for the same ingredient already exists, then the existing quantity is incremented by the quantity received in the payload
 
 
 ### addBakeryItem (POST)
@@ -161,7 +161,7 @@ This API is used to add items in bakery inventory.
 - (string) (When Bakery item is added) Added Bakery Item : nameOfItem 
 - (string) (When Bakery item is added) Updated Bakery Item : nameOfItem
 
-The API serve both purposes of insert and update. So if the Item is not existing in the available records, it create and entry for the bakery otherwise, if the entry for the same bakery already exists, then the existing details are updated by the recentrly received details in payload.
+The API serve both purposes of insert and update. So if the Item is not existing in the available records, it create and entry for the bakery otherwise, if the entry for the same bakery already exists, then the existing details are updated by the recently received details in payload.
 
 ### updateDiscount (PATCH)
 **URL : /inventory/updateDiscount**
@@ -205,7 +205,7 @@ This API is used to add items in bakery inventory.
 ========================================================
 
 ## Customer APIs
-These are the APIs which are supposed to be used by customers ot interact with Bakery, so check the items available and place orders.
+These are the APIs which are supposed to be used by customers to interact with Bakery, so check the items available and place orders.
 
 ### checkItems (GET)
 **URL : /checkItems**
@@ -231,7 +231,7 @@ This API is used to get the most popular items available in bakery.
 None
 
 ###### Success Response 
-- (list) A list of 5 most sold Bakery Items with the details in order of populatrity.
+- (list) A list of 5 most sold Bakery Items with the details in order of popularity.
 
 ### order (POST)
 **URL : /order**
@@ -258,9 +258,9 @@ This API is used to order items from bakery inventory.
 - (string) (if sufficient ingredients are available to serve the order ) Unable to Place order. Not enough stock
 
 When a order is placed, there are 3 operations which are performed :
-- Resource Reservation : Accoruding to the qunatity of Bakery item request and the recipie of the item, resources are resevred in order to cater thte order at hand
+- Resource Reservation : According to the quantity of Bakery item request and the recipe of the item, resources are reserved in order to cater the order at hand
 - Order ID generation : Once resources are reserved, the Order ID is generated. This is an unique a 32-Character hexadecimal string
-- Order Generation :  Obce the ableve two processes are done, the order is placed and the confirmation of the order placement is responsed back to the user.
+- Order Generation :  Once the above two processes are done, the order is placed and the confirmation of the order placement is responded back to the user.
 
 
 
@@ -280,5 +280,5 @@ None
 ====================================
 ====================================
 
-For any issues/concerns please connecte with me over email : aakashkaushal75@gmail.com
+For any issues/concerns please connect with me over email : aakashkaushal75@gmail.com
 
