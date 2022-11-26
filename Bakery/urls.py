@@ -5,6 +5,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('inventory/', include('inventory.urls')),
     path('login', orderViews.login, name='login'),
+    path('logout', orderViews.logout, name='login'),
     path('order', orderViews.placeOrder, name='placeOrder'),
     
 ]
