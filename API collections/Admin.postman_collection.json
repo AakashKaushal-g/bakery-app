@@ -1,0 +1,206 @@
+{
+	"info": {
+		"_postman_id": "25f56071-31a3-40b3-a24b-144f91208992",
+		"name": "Admin",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "getIngredients",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:12345/inventory/getIngredients",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "12345",
+					"path": [
+						"inventory",
+						"getIngredients"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getBakeryItems",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:12345/inventory/getBakeryItems",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "12345",
+					"path": [
+						"inventory",
+						"getBakeryItems"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Home",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:12345/inventory/itemHome",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "12345",
+					"path": [
+						"inventory",
+						"itemHome"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "addIngredients",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"ingredients\": [\r\n        {\r\n            \"name\" : \"Flour\",\r\n            \"quantity\" : 5\r\n        },\r\n        {\r\n            \"name\" : \"Milk\",\r\n            \"quantity\" : 10\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:12345/inventory/addIngredients",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "12345",
+					"path": [
+						"inventory",
+						"addIngredients"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "addBakeryItem",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\" : \"Bread\",\r\n    \"costPrice\" : 25,\r\n    \"sellingPrice\" : 40,\r\n    \"discount\" : 1.25,\r\n    \"ingredients\": [\r\n        {\r\n            \"name\" : \"Flour\",\r\n            \"quantity\" : 2\r\n        },\r\n        {\r\n            \"name\" : \"Milk\",\r\n            \"quantity\" : 1\r\n        },\r\n        {\r\n            \"name\" : \"Eggs\",\r\n            \"quantity\" : 3\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:12345/inventory/addBakeryItem",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "12345",
+					"path": [
+						"inventory",
+						"addBakeryItem"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateDiscount",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\" : \"Bread\",\r\n    \"discount\" : 12\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:12345/inventory/updateDiscount",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "12345",
+					"path": [
+						"inventory",
+						"updateDiscount"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "discardIngredients",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\" :\r\n    [\r\n        \"eggs\",\"flour\"\r\n    ]\r\n    \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:12345/inventory/discardIngredients",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "12345",
+					"path": [
+						"inventory",
+						"discardIngredients"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
