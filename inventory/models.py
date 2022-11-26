@@ -5,10 +5,10 @@ class Inventory(models.Model):
     quantity = models.IntegerField(default=0)
     dateModified = models.DateTimeField(auto_now=True)
 
-# class reserveInventory(models.model) :
-#     ingredientName = models.CharField(max_length=200)
-#     quantity = models.IntegerField(default=0)
-#     dateModified = models.DateTimeField(auto_now=True)
+class reserveInventory(models.Model) :
+    ingredientName = models.CharField(max_length=200)
+    quantity = models.IntegerField(default=0)
+    dateModified = models.DateTimeField(auto_now=True)
 
 class BakeryItem(models.Model):
     itemName = models.CharField(max_length=200)

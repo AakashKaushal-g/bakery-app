@@ -82,9 +82,16 @@ def checkItems(request):
         return HttpResponse(API_ERR_MSG)
 
 def placeOrder(request):
-    pass
     ## Reserve Inventory
+    try:
+        if reserveInventory(request):
+            return HttpResponse("Unable to Place order. Not enough stock")
+    except Exception as e :
+        return HttpResponse("Error Occured. {}".format(str(e)))
 
     ## Create Order ID
 
     ## Create Order
+
+def reserveInventory(request):
+    pass
