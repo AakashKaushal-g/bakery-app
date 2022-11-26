@@ -12,6 +12,34 @@ API_ERR_MSG = "Invalid API Call.Please refer to documentation for correct usage 
 ####################
 ### User Management
 ####################
+@csrf_exempt
+def register(request):
+    if request.method =='POST':
+        try:
+            inputData = json.loads(request.body)
+            password = inputData['password']
+            user = inputData['username']
+            firstName = inputData['firstName']
+            lastName = inputData['lastName']
+            mail = inputData['mail']
+        except Exception as e:
+            print(e)
+            return HttpResponse("Invalid Inputs recived. Please refer documentation fo correct usage of APIs")
+        try:
+            userObj = User.objects.create_user(user,mail,password)
+            userObj.first_name=firstName
+            userObj.last_name=lastName
+            userObj.save()
+            return HttpResponse("Registration Successful for '{}'".format(user))
+
+        except Exception as e:
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            print(exc_type, fname, exc_tb.tb_lineno)
+            return HttpResponse("Error occured while logging in user. Exceptions => {}".format(str(e)))
+
+    else :
+        return HttpResponse(API_ERR_MSG)
 
 @csrf_exempt
 def login(request):

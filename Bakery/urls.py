@@ -10,4 +10,5 @@ urlpatterns = [
     path('order', orderViews.placeOrder, name='placeOrder'),
     path('getOrderHistory', orderViews.getOrderHistory, name='orderHistory'),
     path('getTopSellingItems', orderViews.topSellingItems, name='topSellingItems'),
+    path('register', orderViews.register, name='register'),
 ]
