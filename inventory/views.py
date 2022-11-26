@@ -65,6 +65,35 @@ def addIngredients(request):
     else:
         return HttpResponse(API_ERR_MSG)
 
+@csrf_exempt
+def discardIngredients(request):
+    if protocolCheck(request,'POST'):
+        if adminCheck(request):
+            ingredientList = json.loads(request.body)
+            deletedList = [];failedList=[]
+            for ingredient in ingredientList['name']:
+                try:
+                    resourceData = Inventory.objects.get(ingredientName = ingredient)
+                except:
+                    resourceData = []
+                if resourceData:
+                    resourceData.delete()
+                    deletedList.append(ingredient)
+                else:
+                    failedList.append(ingredient)
+
+            msg = ""
+            if deletedList:
+                msg+="Ingredients deleted : {}. ".format(','.join(deletedList))
+            if failedList:
+                msg+="Ingredients not found : {}".format(','.join(failedList))
+            
+            return HttpResponse(msg)
+
+        else:
+            return HttpResponse(AUTH_ERR_MSG)
+    else:
+        return HttpResponse(API_ERR_MSG)
 #############################
 ### Bakery Items APIs
 #############################
